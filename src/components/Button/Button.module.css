@@ -1,0 +1,32 @@
+.button {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 16px;
+  border-radius: 25px;
+  width: 231px;
+  height: 80px;
+  font-size: 2em;
+  margin: 20px;
+}
+
+.button--send {
+  background-color: #2ae881; /* Синий для send */
+  color: #000000;
+}
+
+.button--download {
+  background-color: #fce300; /* Зеленый для download */
+  color: #000000;
+}
+
+.button--clear {
+  background-color: #201b10; /* Красный для clear */
+}
+
+.disabled {
+  background-color: #c0c0c0;
+  cursor: not-allowed;
+  color: #787878;
+}

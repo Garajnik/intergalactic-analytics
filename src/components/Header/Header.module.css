@@ -1,0 +1,21 @@
+.container {
+  padding: 43px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.image {
+  cursor: pointer;
+  height: auto;
+  width: 45%;
+}
+
+.buttonsContainer {
+  width: 42%;
+  display: flex;
+  gap: 18px;
+  flex-direction: row;
+  align-items: center;
+}

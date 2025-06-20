@@ -1,0 +1,41 @@
+.link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: #201b10;
+  font-size: 1.8em;
+  font-weight: 400;
+}
+
+.activeLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: #201b10;
+  font-size: 16px;
+  font-weight: 500;
+  position: relative;
+}
+
+.activeLink::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background-color: #201b10;
+}
+
+.icon {
+  width: 35px;
+  height: 35px;
+}
+
+.link a,
+.activeLink a {
+  text-decoration: none;
+  color: inherit;
+}
