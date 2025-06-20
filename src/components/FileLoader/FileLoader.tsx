@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import styles from "./FileLoader.module.css";
 import Button from "../Button/Button";
+import FileUploadButton from "../FIleUploadButton/FileUploadButton";
 
 export default function FileLoader() {
   const [isDragging, setIsDragging] = useState(false);
@@ -8,6 +9,8 @@ export default function FileLoader() {
   const [buttonText, setButtonText] = useState<string>("Загрузить файл");
   const [bottomText, setBottomText] = useState<string>("или перетащите сюда");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -61,6 +64,30 @@ export default function FileLoader() {
     }
   };
 
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append("csvFile", selectedFile);
+    formData.append("rows", "1000");
+
+    try {
+      const response = await fetch("http://localhost:3000/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const result = await response.json();
+      console.log("Server response:", result);
+      alert("Upload successful!");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Upload failed!");
+    }
+  };
+
   return (
     <div className={styles.container}>
       <p className={styles.textTop}>
@@ -76,32 +103,22 @@ export default function FileLoader() {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <div className={styles.uploadButtonContainer}>
-          <label
-            className={`${styles.uploadButton} ${
-              selectedFile ? styles.uploaded : ""
-            }`}
-            htmlFor="fileselect"
-          >
-            {buttonText}
-          </label>
-          <input
-            id="fileselect"
-            type="file"
-            ref={fileInputRef}
-            accept=".csv"
-            style={{ display: "none" }}
-            onChange={handleFileSelect}
-          />
-          {selectedFile && (
-            <button className={styles.discardFile} onClick={handleDiscardFile}>
-              <img src="/cross.png" alt="cross" />
-            </button>
-          )}
-        </div>
+        <FileUploadButton
+          loading={isLoading}
+          buttonText={buttonText}
+          fileInputRef={fileInputRef}
+          handleDiscardFile={handleDiscardFile}
+          handleFileSelect={handleFileSelect}
+          selectedFile={selectedFile}
+        />
+
         <span className={styles.fileUploadStatusText}>{bottomText}</span>
       </div>
-      <Button type="send" disabled={selectedFile ? false : true}>
+      <Button
+        handleClick={handleSubmit}
+        type="send"
+        disabled={selectedFile ? false : true}
+      >
         Отправить
       </Button>
       <p className={styles.textHighlight}>

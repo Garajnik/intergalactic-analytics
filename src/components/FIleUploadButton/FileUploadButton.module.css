@@ -1,0 +1,59 @@
+.uploadButton {
+  background-color: #ffffff;
+  border-radius: 10px;
+  width: max-content;
+  height: 70px;
+  padding: 12px 45px 12px 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploaded {
+  border: 0px;
+  background-color: #cb81ff;
+}
+
+.uploadButtonContainer {
+  width: min-content;
+  font-size: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.discardFile {
+  background-color: #201b10;
+  min-width: 70px;
+  width: 70px;
+  height: 70px;
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0px;
+  border-radius: 10px;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #fff;
+  border-bottom-color: #2ae881;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loaderContainer {
+  width: 331px;
+}

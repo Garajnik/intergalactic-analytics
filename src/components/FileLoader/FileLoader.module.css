@@ -42,42 +42,7 @@
   text-align: center;
 }
 
-.uploadButton {
-  background-color: #ffffff;
-  border-radius: 10px;
-  width: max-content;
-  height: 70px;
-  padding: 12px 45px 12px 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
-.uploaded .uploadButton {
-  border: 0px;
-  background-color: #cb81ff;
-}
-
-.discardFile {
-  background-color: #201b10;
-  min-width: 70px;
-  width: 70px;
-  height: 70px;
-  margin-left: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0px;
-  border-radius: 10px;
-}
-
-.uploadButtonContainer {
-  width: min-content;
-  font-size: 2em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .fileUploadStatusText {
   font-size: 2em;
