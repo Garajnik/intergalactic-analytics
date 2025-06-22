@@ -95,7 +95,6 @@ export default function FileLoader() {
     }
   };
 
-  // Function to save an aggregation to localStorage
   const saveAggregation = (newAggregation: Aggregation) => {
     let aggregations: Aggregation[] = [];
     const storedAggregations = localStorage.getItem("aggregations");

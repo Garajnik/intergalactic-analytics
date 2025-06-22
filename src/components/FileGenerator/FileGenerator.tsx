@@ -4,7 +4,7 @@ import Button from "../Button/Button";
 import FileUploadButton from "../FIleUploadButton/FileUploadButton";
 import type { FileUploadButtonProps } from "../FIleUploadButton/FileUploadButton.type";
 
-export default function FileLoader() {
+export default function FileGenerator() {
   const [buttonText, setButtonText] = useState<string>("");
   const [bottomText, setBottomText] = useState<string>("");
   const [fileGenerateStatus, setFileGenerateStatus] =
@@ -61,7 +61,7 @@ export default function FileLoader() {
       <p className={styles.texttop}>
         Сгенерируйте готовый csv-файл нажатием одной кнопки
       </p>
-      <div className={`${styles.dndbg} `}>
+      <div className={`${styles.dndBG} `}>
         {(isGenerating ||
           fileGenerateStatus === "success" ||
           fileGenerateStatus === "error") && (

@@ -89,9 +89,11 @@ export default function History() {
         >
           Сгенерировать больше
         </Button>
-        <Button handleClick={clearHistory} type="clear">
-          Очистить всё
-        </Button>
+        {displayHistory().length > 0 && (
+          <Button handleClick={clearHistory} type="clear">
+            Очистить всё
+          </Button>
+        )}
         <StatsModal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
           <Statistics isModal json={currentData}></Statistics>
         </StatsModal>
