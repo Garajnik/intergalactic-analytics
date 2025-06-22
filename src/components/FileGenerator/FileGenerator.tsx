@@ -61,7 +61,7 @@ export default function FileLoader() {
   return (
     <div className={styles.container}>
       <p className={styles.texttop}>
-        сгенерируйте готовый csv-файл нажатием одной кнопки
+        Сгенерируйте готовый csv-файл нажатием одной кнопки
       </p>
       <div className={`${styles.dndbg} `}>
         {(isGenerating ||

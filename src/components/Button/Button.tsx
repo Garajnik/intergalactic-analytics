@@ -9,7 +9,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      onClick={() => handleClick()}
+      onClick={handleClick}
       className={`${styles.button} ${styles[`button--${type}`]} ${
         disabled ? styles.disabled : ""
       }`}

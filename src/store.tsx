@@ -6,7 +6,7 @@ export interface HeaderStoreProps {
 }
 
 export const useHeaderStore = create<HeaderStoreProps>((set) => ({
-  currentTab: "analyse",
+  currentTab: "generate",
   setTab: (tab: HeaderStoreProps["currentTab"]) =>
     set(() => ({
       currentTab: tab,
