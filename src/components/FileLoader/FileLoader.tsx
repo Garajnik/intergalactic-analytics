@@ -7,8 +7,6 @@ import Statistics from "../Statistics/Statistics";
 import type { StatJSON } from "../Statistics/Statistics.type";
 import type { Aggregation } from "./FileLoader.type";
 
-// Define the structure for saved aggregations
-
 function getCurrentDate(): string {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, "0");
@@ -38,6 +36,8 @@ export default function FileLoader() {
   const [parsedJSON, setParsedJSON] = useState<StatJSON>(initialStats);
   const [fileLoadStatus, setFileLoadStatus] =
     useState<FileUploadButtonProps["status"]>("default");
+
+  const abortController = new AbortController();
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -106,69 +106,120 @@ export default function FileLoader() {
     localStorage.setItem("aggregations", JSON.stringify(aggregations));
   };
 
-  const handleSubmit = () => {
+  const handleErrorFile = (filename: string) => {
+    const currentDate = getCurrentDate();
+    const id = Date.now().toString();
+    const newAggregation: Aggregation = {
+      id: id,
+      date: currentDate,
+      fileName: filename,
+      error: "Error",
+      data: initialStats,
+    };
+    saveAggregation(newAggregation);
+  };
+
+  function checkForNullValues(obj: any, path: string[] = []): void {
+    if (obj === null) {
+      throw new Error(`Поле ${path.join(".")} содержит null`);
+    }
+
+    if (typeof obj === "object" && !Array.isArray(obj)) {
+      for (const key of Object.keys(obj)) {
+        checkForNullValues(obj[key], [...path, key]);
+      }
+    }
+  }
+
+  const handleSubmit = async () => {
     if (selectedFile) {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
-      setFileLoadStatus("loading");
-      setBottomText("Идёт парсинг файла");
-      fetch("http://localhost:3000/aggregate?rows=10000", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.text())
-        .then((data) => {
-          const jsonStrings = data.trim().split("\n");
-          const parsedData = jsonStrings
-            .map((jsonString) => {
-              try {
-                return JSON.parse(jsonString);
-              } catch (error) {
-                console.error(
-                  "Ошибка парсинга JSON:",
-                  error,
-                  "Строка:",
-                  jsonString
-                );
-                return null;
-              }
-            })
-            .filter((item) => item !== null);
-          console.log(parsedData);
-          const lastData = parsedData[parsedData.length - 1];
-          setParsedJSON(lastData);
+      try {
+        setFileLoadStatus("loading");
+        setBottomText("Идёт парсинг файла");
+        const response = await fetch(
+          "http://localhost:3000/aggregate?rows=10000",
+          {
+            method: "POST",
+            body: formData,
+            signal: abortController.signal,
+          }
+        );
 
-          const currentDate = getCurrentDate();
-          const id = Date.now().toString();
-          const newAggregation: Aggregation = {
-            id: id,
-            fileName: selectedFile.name,
-            date: currentDate,
-            data: lastData,
-          };
-          saveAggregation(newAggregation);
-
-          setBottomText("Готово!");
-          setFileLoadStatus("success");
-        })
-        .catch((error) => {
+        if (!response.ok) {
+          console.error("Ошибка при запросе:", response.statusText);
+          handleErrorFile(selectedFile.name);
           setBottomText("Упс, не то...");
           setFileLoadStatus("error");
+          return;
+        }
 
-          const currentDate = getCurrentDate();
-          const id = Date.now().toString();
-          const newAggregation: Aggregation = {
-            id: id,
-            date: currentDate,
-            fileName: selectedFile.name,
-            error: error.message,
-            data: initialStats,
-          };
-          saveAggregation(newAggregation);
+        const reader = response.body?.getReader();
+        if (!reader) {
+          console.error("Не удалось получить поток ответа");
+          handleErrorFile(selectedFile.name);
+          setBottomText("Упс, не то...");
+          setFileLoadStatus("error");
+          return;
+        }
 
-          console.error(error);
-        });
+        const decoder = new TextDecoder();
+        let lastSavedResult: StatJSON = initialStats;
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            try {
+              console.log(
+                "Обработка завершена: " + lastSavedResult.average_spend_galactic
+              );
+              const currentDate = getCurrentDate();
+              const id = Date.now().toString();
+              const newAggregation: Aggregation = {
+                id: id,
+                fileName: selectedFile.name,
+                date: currentDate,
+                data: lastSavedResult,
+              };
+              saveAggregation(newAggregation);
+            } catch (error) {
+              console.error("Ошибка при парсинге JSON:", error);
+              handleErrorFile(selectedFile.name);
+              abortController.abort();
+              setBottomText("Упс, не то...");
+              setFileLoadStatus("error");
+            }
+            setBottomText("Готово!");
+            setFileLoadStatus("success");
+            break;
+          }
+          const chunk = decoder.decode(value);
+          const lines = chunk.split("\n");
+
+          for (const line of lines) {
+            if (line.trim() === "") continue;
+            try {
+              const data: StatJSON = JSON.parse(line);
+              console.log("Промежуточный результат:", data);
+              checkForNullValues(data);
+              lastSavedResult = data;
+              setParsedJSON(data);
+            } catch (error) {
+              console.error("Ошибка при парсинге JSON:", error);
+              abortController.abort();
+              setBottomText("Упс, не то...");
+              setFileLoadStatus("error");
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Ошибка при обработке запроса:", error);
+        handleErrorFile(selectedFile.name);
+        setBottomText("Упс, не то...");
+        setFileLoadStatus("error");
+      }
     }
   };
 
@@ -203,7 +254,7 @@ export default function FileLoader() {
           {bottomText}
         </span>
       </div>
-      {fileLoadStatus !== "success" ? (
+      {fileLoadStatus === "default" ? (
         <Button
           handleClick={handleSubmit}
           type="send"
@@ -214,7 +265,7 @@ export default function FileLoader() {
       ) : (
         ""
       )}
-      {fileLoadStatus === "success" ? (
+      {fileLoadStatus === "success" || fileLoadStatus === "loading" ? (
         <Statistics json={parsedJSON} />
       ) : (
         <p className={styles.textHighlight}>

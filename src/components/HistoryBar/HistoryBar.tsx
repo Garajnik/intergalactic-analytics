@@ -11,7 +11,7 @@ export default function HistoryBar({
   return (
     <div className={styles.container}>
       <div
-        onClick={openModalFunc}
+        onClick={isProcessed ? openModalFunc : () => {}}
         className={`${styles.historyBarContainer} ${
           !isProcessed ? styles.historyBarDisabled : ""
         }`}

@@ -56,8 +56,6 @@ export default function FileLoader() {
     setBottomText("");
   };
 
-  const handleFileSelect = () => {};
-
   return (
     <div className={styles.container}>
       <p className={styles.texttop}>
@@ -72,7 +70,6 @@ export default function FileLoader() {
             buttonText={buttonText}
             fileInputRef={fileInputRef}
             handleDiscardFile={handleDiscardFile}
-            handleFileSelect={handleFileSelect}
             selectedFile={selectedFile}
           />
         )}

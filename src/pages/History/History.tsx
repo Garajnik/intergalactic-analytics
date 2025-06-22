@@ -36,7 +36,7 @@ export default function History() {
     if (storedAggregations) {
       const aggregations: Aggregation[] = JSON.parse(storedAggregations);
       console.log(aggregations);
-      return aggregations;
+      return aggregations.reverse();
     } else {
       console.log("No saved aggregations");
       return [];
