@@ -5,6 +5,17 @@ import FileUploadButton from "../FIleUploadButton/FileUploadButton";
 import type { FileUploadButtonProps } from "../FIleUploadButton/FileUploadButton.type";
 import Statistics from "../Statistics/Statistics";
 import type { StatJSON } from "../Statistics/Statistics.type";
+import type { Aggregation } from "./FileLoader.type";
+
+// Define the structure for saved aggregations
+
+function getCurrentDate(): string {
+  const today = new Date();
+  const day = String(today.getDate()).padStart(2, "0");
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const year = today.getFullYear();
+  return `${day}.${month}.${year}`;
+}
 
 export default function FileLoader() {
   const [isDragging, setIsDragging] = useState(false);
@@ -25,7 +36,6 @@ export default function FileLoader() {
     less_spent_civ: "",
   };
   const [parsedJSON, setParsedJSON] = useState<StatJSON>(initialStats);
-
   const [fileLoadStatus, setFileLoadStatus] =
     useState<FileUploadButtonProps["status"]>("default");
 
@@ -85,6 +95,17 @@ export default function FileLoader() {
     }
   };
 
+  // Function to save an aggregation to localStorage
+  const saveAggregation = (newAggregation: Aggregation) => {
+    let aggregations: Aggregation[] = [];
+    const storedAggregations = localStorage.getItem("aggregations");
+    if (storedAggregations) {
+      aggregations = JSON.parse(storedAggregations);
+    }
+    aggregations.push(newAggregation);
+    localStorage.setItem("aggregations", JSON.stringify(aggregations));
+  };
+
   const handleSubmit = () => {
     if (selectedFile) {
       const formData = new FormData();
@@ -115,13 +136,37 @@ export default function FileLoader() {
             })
             .filter((item) => item !== null);
           console.log(parsedData);
-          setParsedJSON(parsedData[parsedData.length - 1]);
+          const lastData = parsedData[parsedData.length - 1];
+          setParsedJSON(lastData);
+
+          const currentDate = getCurrentDate();
+          const id = Date.now().toString();
+          const newAggregation: Aggregation = {
+            id: id,
+            fileName: selectedFile.name,
+            date: currentDate,
+            data: lastData,
+          };
+          saveAggregation(newAggregation);
+
           setBottomText("Готово!");
           setFileLoadStatus("success");
         })
         .catch((error) => {
           setBottomText("Упс, не то...");
           setFileLoadStatus("error");
+
+          const currentDate = getCurrentDate();
+          const id = Date.now().toString();
+          const newAggregation: Aggregation = {
+            id: id,
+            date: currentDate,
+            fileName: selectedFile.name,
+            error: error.message,
+            data: initialStats,
+          };
+          saveAggregation(newAggregation);
+
           console.error(error);
         });
     }
@@ -150,7 +195,6 @@ export default function FileLoader() {
           handleFileSelect={handleFileSelect}
           selectedFile={selectedFile}
         />
-
         <span
           className={`${styles.fileUploadStatusText} ${
             fileLoadStatus === "error" ? styles.fileUploadStatusError : ""
@@ -170,14 +214,14 @@ export default function FileLoader() {
       ) : (
         ""
       )}
-      {fileLoadStatus !== "success" ? (
+      {fileLoadStatus === "success" ? (
+        <Statistics json={parsedJSON} />
+      ) : (
         <p className={styles.textHighlight}>
           Здесь
           <br />
           появятся хайлайты
         </p>
-      ) : (
-        <Statistics json={parsedJSON} />
       )}
     </div>
   );

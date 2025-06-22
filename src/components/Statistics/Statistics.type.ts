@@ -12,4 +12,5 @@ export interface StatJSON {
 
 export type StatisticsProps = {
   json: StatJSON;
+  isModal?: boolean,
 }

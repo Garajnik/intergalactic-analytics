@@ -19,9 +19,9 @@ function formatDayOfYear(day: number): string {
   return date.toLocaleString("ru-RU", { day: "numeric", month: "long" });
 }
 
-export default function Statistics({ json }: StatisticsProps) {
+export default function Statistics({ json, isModal }: StatisticsProps) {
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${isModal ? styles.modal : ""}`}>
       {Object.entries(json).map(([key, value]) => {
         const typedKey = key as keyof StatJSON;
         const description = descriptions[typedKey] || typedKey;
@@ -39,6 +39,7 @@ export default function Statistics({ json }: StatisticsProps) {
               key={key}
               description={description}
               result={displayValue}
+              inModal={isModal}
             />
           );
         } else {

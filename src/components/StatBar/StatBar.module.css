@@ -10,3 +10,9 @@
   justify-content: center;
   padding: 10px;
 }
+
+.modal {
+  background-color: #eacdff;
+  width: 100%;
+  min-height: 117px;
+}

@@ -9,3 +9,15 @@
   flex-direction: row;
   flex-wrap: wrap;
 }
+
+.modal {
+  width: 100%;
+  display: flex;
+  gap: 15px;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

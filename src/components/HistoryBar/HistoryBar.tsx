@@ -5,10 +5,13 @@ export default function HistoryBar({
   fileName,
   date,
   isProcessed,
+  deleteFunc,
+  openModalFunc,
 }: HistoryBarProps) {
   return (
     <div className={styles.container}>
       <div
+        onClick={openModalFunc}
         className={`${styles.historyBarContainer} ${
           !isProcessed ? styles.historyBarDisabled : ""
         }`}
@@ -35,7 +38,7 @@ export default function HistoryBar({
           <img src="/SadFace.png" alt="sadFace" />
         </div>
       </div>
-      <button className={styles.deleteIcon}>
+      <button onClick={deleteFunc} className={styles.deleteIcon}>
         <img src="/TrashIcon.png" alt="trashCan" />
       </button>
     </div>
