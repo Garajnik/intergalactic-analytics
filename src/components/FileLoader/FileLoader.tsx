@@ -119,14 +119,12 @@ export default function FileLoader() {
     saveAggregation(newAggregation);
   };
 
-  function checkForNullValues(obj: any, path: string[] = []): void {
-    if (obj === null) {
-      throw new Error(`Поле ${path.join(".")} содержит null`);
-    }
-
-    if (typeof obj === "object" && !Array.isArray(obj)) {
-      for (const key of Object.keys(obj)) {
-        checkForNullValues(obj[key], [...path, key]);
+  function checkForNullValues(
+    data: Partial<StatJSON>
+  ): asserts data is StatJSON {
+    for (const [key, value] of Object.entries(data)) {
+      if (value === null || value === undefined) {
+        throw new Error(`Ошибка: поле "${key}" содержит ${value}`);
       }
     }
   }
