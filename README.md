@@ -1,54 +1,39 @@
-# React + TypeScript + Vite
+# Разработка интерфейса для Сервиса межгалактической аналитики
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Технологии
 
-Currently, two official plugins are available:
+- **Vite** — для быстрой сборки проекта.
+- **React** - библиотека интерфейсов.
+- **TypeScipt** - типизация для JS.
+- **React Router DOM** — маршрутизация SPA.
+- **Zustand** — легковесное управление состоянием.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## Запуск _backend_
+```bash
+# 1. Скачиваем бэк от сюда: https://github.com/etozhenerk/shri2025-back
+git clone <URL> backend
+cd backend
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+# 2. Устанавливаем зависимости
+npm install
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+# 3. Запускаем backend
+npm run start
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Запуск _frontend_:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+# 1. Клонируем репозиторий в заранее созданную папку
+git clone <URL> frontend
+cd frontend
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+# 2. Устанавливаем зависимости
+npm install
+
+# 3. Запуск в режиме разработки
+npm run dev
+# Приложение будет доступно по адресу: http://localhost:5173
 ```
