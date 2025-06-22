@@ -4,5 +4,5 @@ export interface FileUploadButtonProps {
   handleDiscardFile: () => void;
   handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
   selectedFile: File | null;
-    loading?: boolean;
+    status: "loading" | "success" | "error" | "default";
 }

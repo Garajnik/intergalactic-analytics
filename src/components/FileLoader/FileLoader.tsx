@@ -2,6 +2,9 @@ import { useState, useRef } from "react";
 import styles from "./FileLoader.module.css";
 import Button from "../Button/Button";
 import FileUploadButton from "../FIleUploadButton/FileUploadButton";
+import type { FileUploadButtonProps } from "../FIleUploadButton/FileUploadButton.type";
+import Statistics from "../Statistics/Statistics";
+import type { StatJSON } from "../Statistics/Statistics.type";
 
 export default function FileLoader() {
   const [isDragging, setIsDragging] = useState(false);
@@ -10,7 +13,21 @@ export default function FileLoader() {
   const [bottomText, setBottomText] = useState<string>("или перетащите сюда");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const initialStats: StatJSON = {
+    total_spend_galactic: 0,
+    rows_affected: 0,
+    less_spent_at: 0,
+    big_spent_at: 0,
+    less_spent_value: 0,
+    big_spent_value: 0,
+    average_spend_galactic: 0,
+    big_spent_civ: "",
+    less_spent_civ: "",
+  };
+  const [parsedJSON, setParsedJSON] = useState<StatJSON>(initialStats);
+
+  const [fileLoadStatus, setFileLoadStatus] =
+    useState<FileUploadButtonProps["status"]>("default");
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -50,8 +67,11 @@ export default function FileLoader() {
       setSelectedFile(file);
       setButtonText(file.name);
       setBottomText("Файл загружен!");
+      setFileLoadStatus("default");
     } else {
-      console.log("Разрешены только CSV файлы");
+      setBottomText("Упс, не то...");
+      setFileLoadStatus("error");
+      setButtonText(file.name);
     }
   };
 
@@ -59,32 +79,51 @@ export default function FileLoader() {
     setSelectedFile(null);
     setButtonText("Загрузить файл");
     setBottomText("или перетащите сюда");
+    setFileLoadStatus("default");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  const handleSubmit = async () => {
-    const formData = new FormData();
-    formData.append("csvFile", selectedFile);
-    formData.append("rows", "1000");
+  const handleSubmit = () => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
 
-    try {
-      const response = await fetch("http://localhost:3000/upload", {
+      setFileLoadStatus("loading");
+      setBottomText("Идёт парсинг файла");
+      fetch("http://localhost:3000/aggregate?rows=10000", {
         method: "POST",
         body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const result = await response.json();
-      console.log("Server response:", result);
-      alert("Upload successful!");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Upload failed!");
+      })
+        .then((response) => response.text())
+        .then((data) => {
+          const jsonStrings = data.trim().split("\n");
+          const parsedData = jsonStrings
+            .map((jsonString) => {
+              try {
+                return JSON.parse(jsonString);
+              } catch (error) {
+                console.error(
+                  "Ошибка парсинга JSON:",
+                  error,
+                  "Строка:",
+                  jsonString
+                );
+                return null;
+              }
+            })
+            .filter((item) => item !== null);
+          console.log(parsedData);
+          setParsedJSON(parsedData[parsedData.length - 1]);
+          setBottomText("Готово!");
+          setFileLoadStatus("success");
+        })
+        .catch((error) => {
+          setBottomText("Упс, не то...");
+          setFileLoadStatus("error");
+          console.error(error);
+        });
     }
   };
 
@@ -104,7 +143,7 @@ export default function FileLoader() {
         onDrop={handleDrop}
       >
         <FileUploadButton
-          loading={isLoading}
+          status={fileLoadStatus}
           buttonText={buttonText}
           fileInputRef={fileInputRef}
           handleDiscardFile={handleDiscardFile}
@@ -112,20 +151,34 @@ export default function FileLoader() {
           selectedFile={selectedFile}
         />
 
-        <span className={styles.fileUploadStatusText}>{bottomText}</span>
+        <span
+          className={`${styles.fileUploadStatusText} ${
+            fileLoadStatus === "error" ? styles.fileUploadStatusError : ""
+          }`}
+        >
+          {bottomText}
+        </span>
       </div>
-      <Button
-        handleClick={handleSubmit}
-        type="send"
-        disabled={selectedFile ? false : true}
-      >
-        Отправить
-      </Button>
-      <p className={styles.textHighlight}>
-        Здесь
-        <br />
-        появятся хайлайты
-      </p>
+      {fileLoadStatus !== "success" ? (
+        <Button
+          handleClick={handleSubmit}
+          type="send"
+          disabled={selectedFile ? false : true}
+        >
+          Отправить
+        </Button>
+      ) : (
+        ""
+      )}
+      {fileLoadStatus !== "success" ? (
+        <p className={styles.textHighlight}>
+          Здесь
+          <br />
+          появятся хайлайты
+        </p>
+      ) : (
+        <Statistics json={parsedJSON} />
+      )}
     </div>
   );
 }

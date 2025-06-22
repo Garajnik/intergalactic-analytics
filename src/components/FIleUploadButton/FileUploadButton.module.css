@@ -14,6 +14,16 @@
   background-color: #cb81ff;
 }
 
+.success {
+  border: 0px;
+  background-color: #d4fae6;
+}
+
+.error {
+  border: 0;
+  background-color: #ff5f00;
+}
+
 .uploadButtonContainer {
   width: min-content;
   font-size: 2em;

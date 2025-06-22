@@ -7,11 +7,11 @@ export default function FileUploadButton({
   handleDiscardFile,
   handleFileSelect,
   selectedFile,
-  loading,
+  status,
 }: FileUploadButtonProps) {
   return (
     <div className={styles.uploadButtonContainer}>
-      {loading ? (
+      {status === "loading" ? (
         <div
           className={`${styles.uploadButton} ${styles.uploaded} ${styles.loaderContainer}`}
         >
@@ -22,7 +22,9 @@ export default function FileUploadButton({
           <label
             className={`${styles.uploadButton} ${
               selectedFile ? styles.uploaded : ""
-            }`}
+            } ${status === "success" ? styles.success : ""}
+                ${status === "error" ? styles.error : ""}
+                `}
             htmlFor="fileselect"
           >
             {buttonText}
@@ -35,7 +37,7 @@ export default function FileUploadButton({
             style={{ display: "none" }}
             onChange={handleFileSelect}
           />
-          {selectedFile && (
+          {(selectedFile || status === "error" || status === "success") && (
             <button className={styles.discardFile} onClick={handleDiscardFile}>
               <img src="/cross.png" alt="cross" />
             </button>

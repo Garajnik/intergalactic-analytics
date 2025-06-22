@@ -1,3 +1,9 @@
+import FileGenerator from "../../components/FileGenerator/FileGenerator";
+
 export default function Generator() {
-  return <div>Generator</div>;
+  return (
+    <div>
+      <FileGenerator />
+    </div>
+  );
 }

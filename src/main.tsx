@@ -12,8 +12,8 @@ createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="/" element={<Analyst />} />
-        <Route path="generator" element={<Generator />} />
+        <Route path="analyse" element={<Analyst />} />
+        <Route path="generate" element={<Generator />} />
         <Route path="history" element={<History />} />
       </Routes>
     </BrowserRouter>

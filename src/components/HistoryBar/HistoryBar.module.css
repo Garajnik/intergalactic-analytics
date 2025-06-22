@@ -1,0 +1,75 @@
+.container {
+  display: flex;
+  align-items: center;
+  height: 92px;
+  width: 90%;
+}
+
+.historyBarContainer {
+  display: flex;
+  align-items: center;
+  background-color: #cb81ff; /* лавандовый фон */
+  padding: 10px 50px 10px 50px;
+  height: 100%;
+  width: 90%;
+  border-radius: 40px;
+  font-size: 1.5em;
+  justify-content: space-between;
+  user-select: none;
+  cursor: pointer;
+}
+
+.historyBarDisabled {
+  cursor: default;
+}
+
+.fileName {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.fileName img {
+  width: 40px;
+  height: 40px;
+  margin-right: 5px;
+}
+
+.statusEnabled {
+  display: flex;
+  align-items: center;
+}
+
+.statusDisabled {
+  opacity: 0.5;
+}
+
+.container > div:nth-child(3) img,
+.container > div:nth-child(4) img {
+  width: 40px;
+  height: 40px;
+  margin-left: 5px;
+}
+
+.deleteIcon {
+  height: 92px;
+  width: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  background-color: #ffffff;
+  border-radius: 20px;
+}
+
+.deleteIcon img {
+  width: 40px;
+  height: 40px;
+}
+
+.deleteIcon:hover img {
+  opacity: 0.7;
+}

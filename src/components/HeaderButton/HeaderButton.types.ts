@@ -1,7 +1,8 @@
+import type { MouseEventHandler } from "react"
 import type { defaultProps } from "../../shared/defaultProps"
 
 export type HeaderButtonProps = defaultProps & {
-    linkPath: string,
+    onClick: MouseEventHandler<HTMLDivElement>,
     iconPath: string,
     isActive: boolean,
 }
